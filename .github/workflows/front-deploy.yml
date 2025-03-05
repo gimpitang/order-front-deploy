@@ -1,1 +1,44 @@
+name: Deploy to AWS S3
+# main에 푸시를 하면 일련의 jobs가 돌아가게 한다
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    # 가상pc(깃헙액션) 만들어서 가장 최신의 우분투를 실행
+    runs-on: ubuntu-latest
+    # 깃헙액션을 시작한다
+    steps:
+    - uses: actions/checkout@v2
 
+    - name: setup node.js
+    # 액션스의 setupnode(패키징되어있음)를 갖다 쓸거다!
+      uses: actions/setup-node@v2
+      with:
+        node-version: '22'
+    
+        # 가상의 컴퓨터에서 npm install을 현재 폴더에서 실행하겠다.
+    - name: npm install
+      working-directory: .
+      run: npm install
+
+    # dist폴더 만들거다!
+    - name: npm build
+      working-directory: .
+      run: npm run build
+
+    # Cli 프로그램을 설치할거다! 수업시간에 저번에 다운 받음.
+    - name: setup aws cli
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+        aws-secret-access-key: ${{secrets.AWS_SECRET_KEY}}
+        aws-region: "ap-northeast-2"
+
+    - name: deploy to s3
+      run: |
+        aws s3 cp ./dist s3://www.youngjae.shop/ --recursive
+        
+    - name: invalidate cloudfront cache
+      run: aws cloudfront create-invalidation --distribution-id E2GWHKXJBPEGN9 --paths "/*"
