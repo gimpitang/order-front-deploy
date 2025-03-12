@@ -47,6 +47,7 @@ export default{
         async doLogin(){
             const loginData = {email:this.email, password:this.password};
             const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/doLogin`,loginData);
+            console.log("login 응답 : ", response);
             const token = response.data.token;
             const refreshToken = response.data.refreshToken;
             localStorage.setItem('token',token);
