@@ -47,7 +47,7 @@ export default{
         async doLogin(){
             try {
                 const loginData = { email: this.email, password: this.password };
-                console.log("login start !!");
+                console.log(`login url : ${process.env.VUE_APP_API_BASE_URL}/member/doLogin`);
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/member/doLogin`, loginData);
                 console.log("login 응답: ", response);
                 const token = response.data.token;
