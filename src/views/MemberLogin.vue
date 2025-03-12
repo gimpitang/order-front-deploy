@@ -50,7 +50,7 @@ export default{
             const token = response.data.token;
             const refreshToken = response.data.refreshToken;
             localStorage.setItem('token',token);
-            localStorage.setItem('refreshToken',refreshToken);
+            localStorage.setItem('refreshToken',refreshToken); 
             window.location.href = "/";
         }
     }
